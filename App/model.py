@@ -94,23 +94,27 @@ def addGraph(analyzer, stopin, stopfin, duracion):
     """
     Adiciona una estación como un vertice del grafo
     """
-    try:
-        if not gr.containsVertex(analyzer['viajes'], stopin):
-            gr.insertVertex(analyzer['viajes'], stopin)
+    
+    if not gr.containsVertex(analyzer['viajes'], stopin):
+        gr.insertVertex(analyzer['viajes'], stopin)
+    if not gr.containsVertex(analyzer['viajes'], stopfin):
+        gr.insertVertex(analyzer['viajes'], stopfin)
 
-        if not gr.containsVertex(analyzer['viajes'], stopfin):
-            gr.insertVertex(analyzer['viajes'], stopfin)
-
+<<<<<<< HEAD
         edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
         if edge is None:
             gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
+=======
+    edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
+    if edge is None or edge > duracion:
+        gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
+>>>>>>> 23607d9bd4f158cac0ef5ff4c23a64a38ea48021
 
-        return analyzer
+    return analyzer
 
 def taxi(analyzer, service):
     entry = m.get(analyzer['taxis'], service["taxi_id"])
     if entry is None:
-
         infoService ={"cuantosViajes":1 ,"id" : service["taxi_id"], "tiempoUso": int(service["trip_seconds"]) , 'distancia':float(service['tripmiles']),"viajes": lt.newList("ARRAY_LIST", cmpfunction=compareTrips)}
         lt.addLast(infoService["viajes"], service)
         m.put(analyzer['taxis'], service["taxi_id"], infoService)
@@ -123,7 +127,7 @@ def taxi(analyzer, service):
 
 def addcompañia(analyzer, compañia, service):
     entry = m.get(analyzer['empresas'], compañia)
-    if entry in None:
+    if entry is None:
         infoCompany = {'name': compañia, 'cuantosviajes':1, 'taxis' : m.newMap(numelements=2000, maptype='PROBING', comparefunction=compareTaxis) }
         m.put(analyzer['empresas'], compañia, infoCompany)    
     else:
@@ -218,6 +222,12 @@ def topServComp(analyzer):
     lista = converirLista(analyzer['empresas'])
     ist.insertionSort(lista, comparaServicios)
     return lista
+<<<<<<< HEAD
+
+def topServComp(analyzer, cuantos):
+    pass
+=======
+>>>>>>> a9c559abd84e5166753bfb57e9b20e7f326bc7dd
 def obtenerDia(analyzer, dia):
     diain = om.get(analyzer['fechas'], dia)['value']['taxi']
     lista = converirLista(diain)
