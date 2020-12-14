@@ -33,6 +33,8 @@ from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+import datetime
+from datetime import date
 assert config
 
 """
@@ -100,16 +102,16 @@ def addGraph(analyzer, stopin, stopfin, duracion):
     if not gr.containsVertex(analyzer['viajes'], stopfin):
         gr.insertVertex(analyzer['viajes'], stopfin)
 
-    edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
+    edge = gr.getEdge(analyzer['viajes'], stopin, stopfin)
     if edge is None or edge > duracion:
-        gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
+        gr.addEdge(analyzer['viajes'], stopfin, stopfin, duracion)
 
     return analyzer
 
 def taxi(analyzer, service):
     entry = m.get(analyzer['taxis'], service["taxi_id"])
     if entry is None:
-        infoService ={"cuantosViajes":1 ,"id" : service["taxi_id"], "tiempoUso": int(service["trip_seconds"]) , 'distancia':float(service['tripmiles']),"viajes": lt.newList("ARRAY_LIST", cmpfunction=compareTrips)}
+        infoService ={"cuantosViajes":1 ,"id" : service["taxi_id"], "tiempoUso": float(service["trip_seconds"]) , 'distancia':float(service['trip_miles']),"viajes": lt.newList("ARRAY_LIST", cmpfunction=compareTrips)}
         lt.addLast(infoService["viajes"], service)
         m.put(analyzer['taxis'], service["taxi_id"], infoService)
     else:
@@ -152,7 +154,7 @@ def newDateEntry():
 
 def uptadeHour(analyzer,service):
     date = service['Start_Time']
-    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%s')
     formato=":"
     if serviceDate.minute>=30:
         formato=str(serviceDate.hour)+":30"
@@ -173,7 +175,7 @@ def uptadeHour(analyzer,service):
 
 def uptadeDate(analyzer,service):
     date = service['trip_start_timestamp']
-    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%s')
     entry = om.get(analyzer['fechas'], serviceDate.date())
 
     if entry is None:
@@ -245,15 +247,65 @@ def communityArea(analyzer, origen, destino, timein, timefin):
             inicio= inf['pickup_community_area']
             final= inf['dropoff_community_area']
             duracion = inf['trip_seconds']
-             if not gr.containsVertex(graph, stopin):
-            gr.insertVertex(graph, stopin)
-            if not gr.containsVertex(graph, stopfin):
-                gr.insertVertex(graph, stopfin)
-            edge = gr.getEdge(graph, stopin, stopfin)
+            if not gr.containsVertex(graph, inicio):
+                gr.insertVertex(graph, inicio)
+            if not gr.containsVertex(graph, final):
+                gr.insertVertex(graph, final)
+            edge = gr.getEdge(graph, inicio, final)
             if edge is None:
-                gr.addEdge(graph, stopfin, stopfin, duracion)
+                gr.addEdge(graph, inicio, final, duracion)
     
+    if gr.containsVertex(graph, stopin) and gr.containsVertex(graph, final):
+        lista1 = lt.newList("ARRAY_LIST")
+        adyacentes = gr.adjacents(graph, origen)
+        analyzer['components'] = scc.KosarajuSCC(graph)
+        for h in range (adyacentes['size']):
+            adyacente= lt.getElement(adyacentes,h)
+            fcc = sameCC(graph, estacion, adyacente)
+            if fcc:
+                tiempo=0
+                analyzer['paths'] = dfs.DepthFirstSearch(graph, adyacente)
+                caminos = dfs.pathTo(analyzer["paths"], estacion)
+                primero= caminos['first']
+                siguiente = primero['next']
+                for i in range(caminos['size']-1):
+                    infoin = primero['info']
+                    if siguiente is not None:
+                        infoul = siguiente['info']
+                        arco = gr.getEdge(graph, infoin, infoul)
+                        if arco is not None:
+                            tiempo += float(arco["weight"])
+                    primero = primero['next']
+                    siguiente = siguiente['next']
+                suma = float(caminos['size'])*1200
+                tiempo+=suma
+                lt.addLast(caminos,tiempo)
+                lt.addLast(lista1, caminos)
 
+        tiempo1=100000000.0
+        rta={}
+        listafinal= lt.newList("ARRAY_LIST")
+        if lista1 is not None:
+            tmi = int(tiempoin)*60
+            tmf = int(tiempofin)*60
+            while (not stack.isEmpty(lista1)):
+                parada = stack.pop(lista1)
+                if float(parada['last']['info']) > tiempo1: 
+                    tiempo1= float(parada['last']['info'])
+                    rta = parada
+        return rta
+
+def sameCC(analyzer, station1, station2):
+    vert1 = gr.containsVertex(analyzer, station1)
+    vert2 = gr.containsVertex(analyzer, station2)
+    if vert1 is False and vert2 is False:
+        return "0"
+    elif vert1 is False:
+        return "1"
+    elif vert2 is False:
+        return "2"
+    else:
+        return scc.stronglyConnected(analyzer['components'], station1, station2)
 
 
 
@@ -301,9 +353,9 @@ def comparaPuntos(element1, element2):
     return False
 
 def compareTrips(trip1, trip2):
-    if (trip1 == trip2):
+    if (trip1 == trip2['key']):
         return 0
-    elif (trip1 > trip2):
+    elif (trip1 > trip2['key']):
         return 1
     else:
         return -1

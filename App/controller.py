@@ -28,6 +28,7 @@ import config as cf
 from App import model
 from DISClib.ADT import map as m
 import csv
+import os
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
