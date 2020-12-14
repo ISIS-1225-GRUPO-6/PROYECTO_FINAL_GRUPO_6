@@ -26,6 +26,7 @@
 
 import config as cf
 from App import model
+from DISClib.ADT import map as m
 import csv
 
 """
@@ -51,6 +52,7 @@ def init():
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
+<<<<<<< HEAD
 def loadTrips (analyzer):
     for filename in os.listdir(cf.data_dir):
         if filename.endswith('.csv'):
@@ -73,6 +75,29 @@ def loadServices(analyzer, servicesfile):
         model.añadirViaje   (analyzer, lastservice)
         
     return analyzer
+=======
+def totalComp(analyzer):
+    print(str(model.numTotalComp(analyzer)))
+
+def totalTaxis(analyzer):
+    print(str(model.numTotalTaxis(analyzer)))
+
+def topCompTaxis(analyzer, cuantos):
+    lista = model.topCompTaxis(analyzer)
+     i=0
+    while i<cuantos:
+        elemento = lt.getElement(lista, i)
+        i+=1
+        print(str(i) + ". " + str(elemento['name']) + " con " + str(m.size(elemento['taxis'])) + " puntos")
+
+def topServComp(analyzer, cuantos):
+    lista = model.topServComp(analyzer)
+     i=0
+    while i<cuantos:
+        elemento = lt.getElement(lista, i)
+        i+=1
+        print(str(i) + ". " + str(elemento['name']) + " con " + str(elemento['cuantosviajes']) + " puntos")
+>>>>>>> a9c559abd84e5166753bfb57e9b20e7f326bc7dd
 
 def obtenerDia(analyzer, dia, cuantos):
     din = datetime.datetime.strptime(dia, '%Y-%m-%d')

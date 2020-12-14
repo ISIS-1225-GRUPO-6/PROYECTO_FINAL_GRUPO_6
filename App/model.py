@@ -139,8 +139,8 @@ def addcompañia(analyzer, compañia, service):
     
 def newHourEntry():
  
-    entry = {'idtaxi': None, 'service': None}
-    entry['service'] = lt.newList('SINGLE_LINKED', compareDates)
+    entry = {'hour': None, 'service': None}
+    entry['service'] = lt.newList('SINGLE_LINKED', compareHours)
     return entry
 
 def newDateEntry():
@@ -168,7 +168,7 @@ def uptadeHour(analyzer,service):
         hour_entry = me.getValue(entry)
     
     lt.addLast(hour_entry['service'], service)
-    hour_entry['idtaxi']= service['taxi_id']
+    hour_entry['hour']= format
     return analyzer
 
 def uptadeDate(analyzer,service):
@@ -208,20 +208,25 @@ def numTotalTaxis(analyzer):
     return m.size(analyzer['taxis'])
 def numTotalComp(analyzer):
     return m.size(analyzer['empresas'])
-def topCompTaxis(analyzer, cuantos):
+def topCompTaxis(analyzer):
     lista = converirLista(analyzer['empresas'])
-    ist.insertionSort(lista, comparaPuntos)
+    ist.insertionSort(lista, comparaTaxiRank)
     return lista
+def topServComp(analyzer):
+    lista = converirLista(analyzer['empresas'])
+    ist.insertionSort(lista, comparaServicios)
+    return lista
+<<<<<<< HEAD
 
 def topServComp(analyzer, cuantos):
     pass
+=======
+>>>>>>> a9c559abd84e5166753bfb57e9b20e7f326bc7dd
 def obtenerDia(analyzer, dia):
-
     diain = om.get(analyzer['fechas'], dia)['value']['taxi']
     lista = converirLista(diain)
     ist.insertionSort(lista, comparaPuntos)
     return lista
-
 def obtenerDias(analyzer, diain, diaul):
     lista = lt.newList("ARRAY_LIST", cmpfunction=compareTaxis)
     llaves = om.keys(analyzer['fechas'], diain,diaul)
@@ -233,6 +238,15 @@ def obtenerDias(analyzer, diain, diaul):
     ist.insertionSort(lista, comparaPuntos)
     return lista
     
+def communityArea(analyzer, origen, destino, timein, timefin):
+
+    llaves = om.keys(analyzer['hora'],timein, timefin)
+    iterator= it.newIterator(llaves)
+    while (it.hasNext(iterator)):
+        info= it.next(iterator)
+        valor = om.get(analyzer['hora'],info)['value']['service']
+        
+
 
 
 # ==============================
@@ -261,6 +275,18 @@ def converirListas(map, lista):
 # ==============================
 # Funciones de Comparacion
 # ==============================
+def comparaServicios(element1, element2):
+    if float(element1['cuantosviajes']) > float(element2['cuantosviajes']):
+        return True
+    return False
+
+def comparaTaxiRank(element1, element2):
+    taxis1 = m.size(element1['taxis'])
+    taxis2 = m.size(element2['taxis'])
+    if int(taxis1) > int(taxis2):
+        return True
+    return False
+
 def comparaPuntos(element1, element2):
     if float(element1['puntos']) > float(element2['puntos']):
         return True
