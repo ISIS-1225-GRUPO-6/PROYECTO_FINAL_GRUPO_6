@@ -74,10 +74,10 @@ def optionThree():
 
 def optionFour():
     ene=int(input("Digite la cantidad de taxis con más puntos en una fecha que desea conocer.\n"))
-    fecha1=input("Digite la fecha que desea conocer.\n"))
+    fecha1=input("Digite la fecha que desea conocer.\n")
     eme=int(input("Digite la cantidad de taxis con más puntos en un rango de fechas que desea conocer.\n"))
-    diain=input("Digite la fecha de inicio del rango.\n"))
-    diaul=input("Digite la fecha de final del rango.\n"))
+    diain=input("Digite la fecha de inicio del rango.\n")
+    diaul=input("Digite la fecha de final del rango.\n")
     controller.obtenerDia(cont,fecha1, ene)
     controller.obtenerDias(cont, diain, diaul, eme)
 
@@ -88,7 +88,7 @@ def optionFive():
     print("Ingrese el nombre de dos Community Areas\n")
     com1=str(input("Primer Community Area:\n"))
     com2=str(input("Segunda Community Area:\n"))
-    controller.
+    
     
 """
 Menu principal

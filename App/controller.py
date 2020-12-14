@@ -82,7 +82,7 @@ def totalTaxis(analyzer):
 
 def topCompTaxis(analyzer, cuantos):
     lista = model.topCompTaxis(analyzer)
-     i=0
+    i=0
     while i<cuantos:
         elemento = lt.getElement(lista, i)
         i+=1
@@ -90,7 +90,7 @@ def topCompTaxis(analyzer, cuantos):
 
 def topServComp(analyzer, cuantos):
     lista = model.topServComp(analyzer)
-     i=0
+    i=0
     while i<cuantos:
         elemento = lt.getElement(lista, i)
         i+=1
