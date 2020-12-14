@@ -100,15 +100,9 @@ def addGraph(analyzer, stopin, stopfin, duracion):
     if not gr.containsVertex(analyzer['viajes'], stopfin):
         gr.insertVertex(analyzer['viajes'], stopfin)
 
-<<<<<<< HEAD
-        edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
-        if edge is None:
-            gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
-=======
     edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
     if edge is None or edge > duracion:
         gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
->>>>>>> 23607d9bd4f158cac0ef5ff4c23a64a38ea48021
 
     return analyzer
 
