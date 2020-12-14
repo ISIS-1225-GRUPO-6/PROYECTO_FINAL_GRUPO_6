@@ -62,18 +62,22 @@ def printMenu():
 def optionTwo():
     print("\nCargando información de los servicios de taxis ....")
     controller.loadTrips(cont)
-    #numedges = controller.totalConnections(cont)
-    #numvertex = controller.totalStops(cont)
+    
    
 def optionThree():
     comp_por_taxis  = int(input("Digite el número para el top de compañías ordenada por la cantidad de taxis afiliados\n"))
     comp_por_servicios = int(input("Digite el número para el top de compañías que más servicios prestaron\n"))
-    #controller.
+    controller.totalComp(cont)
+    controller.totalTaxis(cont)
 
 def optionFour():
     ene=int(input("Digite la cantidad de taxis con más puntos en una fecha que desea conocer.\n"))
+    fecha1=input("Digite la fecha que desea conocer.\n"))
     eme=int(input("Digite la cantidad de taxis con más puntos en un rango de fechas que desea conocer.\n"))
-    #controller.
+    diain=input("Digite la fecha de inicio del rango.\n"))
+    diaul=input("Digite la fecha de final del rango.\n"))
+    controller.topCompTaxis(cont,fecha1, ene)
+    controller.topServComp(cont, diain, diaul, eme)
 
 def optionFive():
     print("Digite el rango horario para desplazarse en el menor tiempo entre dos Community Area (HH:MM)")
@@ -82,7 +86,7 @@ def optionFive():
     print("Ingrese el nombre de dos Community Areas")
     com1=str(input("Primer Community Area:\n"))
     com2=str(input("Segunda Community Area:\n"))
-    #controller.
+    controller.
     
 """
 Menu principal

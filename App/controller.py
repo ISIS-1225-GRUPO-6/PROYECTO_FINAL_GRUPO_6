@@ -52,7 +52,6 @@ def init():
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
-<<<<<<< HEAD
 def loadTrips (analyzer):
     for filename in os.listdir(cf.data_dir):
         if filename.endswith('.csv'):
@@ -75,7 +74,6 @@ def loadServices(analyzer, servicesfile):
         model.añadirViaje   (analyzer, lastservice)
         
     return analyzer
-=======
 def totalComp(analyzer):
     print(str(model.numTotalComp(analyzer)))
 
@@ -97,7 +95,6 @@ def topServComp(analyzer, cuantos):
         elemento = lt.getElement(lista, i)
         i+=1
         print(str(i) + ". " + str(elemento['name']) + " con " + str(elemento['cuantosviajes']) + " puntos")
->>>>>>> a9c559abd84e5166753bfb57e9b20e7f326bc7dd
 
 def obtenerDia(analyzer, dia, cuantos):
     din = datetime.datetime.strptime(dia, '%Y-%m-%d')
