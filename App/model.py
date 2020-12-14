@@ -33,6 +33,7 @@ from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+from DISClib.DataStructures import mapentry as me
 import datetime
 from datetime import date
 assert config
@@ -103,22 +104,25 @@ def addGraph(analyzer, stopin, stopfin, duracion):
         gr.insertVertex(analyzer['viajes'], stopfin)
 
     edge = gr.getEdge(analyzer['viajes'], stopin, stopfin)
-    if edge is None or edge > duracion:
+    if edge is None :
         gr.addEdge(analyzer['viajes'], stopfin, stopfin, duracion)
 
     return analyzer
 
 def taxi(analyzer, service):
     entry = m.get(analyzer['taxis'], service["taxi_id"])
+    tiempo=0.0
+    if service["trip_seconds"] !='':
+        tiempo = float(service["trip_seconds"]) 
     if entry is None:
-        infoService ={"cuantosViajes":1 ,"id" : service["taxi_id"], "tiempoUso": float(service["trip_seconds"]) , 'distancia':float(service['trip_miles']),"viajes": lt.newList("ARRAY_LIST", cmpfunction=compareTrips)}
+        infoService ={"cuantosViajes":1 ,"id" : service["taxi_id"], "tiempoUso": tiempo , 'distancia':float(service['trip_miles']),"viajes": lt.newList("ARRAY_LIST", cmpfunction=compareTrips)}
         lt.addLast(infoService["viajes"], service)
         m.put(analyzer['taxis'], service["taxi_id"], infoService)
     else:
         infoService = entry['value']
         if infoService["id"]==service["taxi_id"]:
             infoService["cuantosViajes"]+=1
-            infoService["tiempoUso"]+= int(service["trip_seconds"])
+            infoService["tiempoUso"]+= tiempo
             lt.addLast(infoService["viajes"],service)
 
 def addcompañia(analyzer, compañia, service):
@@ -153,8 +157,8 @@ def newDateEntry():
     return entry
 
 def uptadeHour(analyzer,service):
-    date = service['Start_Time']
-    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%s')
+    date = service['trip_start_timestamp']
+    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%f')
     formato=":"
     if serviceDate.minute>=30:
         formato=str(serviceDate.hour)+":30"
@@ -175,7 +179,7 @@ def uptadeHour(analyzer,service):
 
 def uptadeDate(analyzer,service):
     date = service['trip_start_timestamp']
-    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%s')
+    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%f')
     entry = om.get(analyzer['fechas'], serviceDate.date())
 
     if entry is None:
@@ -185,20 +189,26 @@ def uptadeDate(analyzer,service):
         date_entry = me.getValue(entry)
     
     lt.addLast(date_entry['service'], service)
-    taxi = m.get(date_entry['taxis'], service['taxi_id'])
-    millas = float(service['trip_miles'])
-    dinero = float(service['trip_total'])
+    taxi = m.get(date_entry['taxi'], service['taxi_id'])
+    dinero=0.0
+    millas=0.0
+    if service['trip_miles'] != '':
+        millas = float(service['trip_miles'])
+    if service['trip_total'] != '':
+        dinero = float(service['trip_total'])
     if taxi is None:
         infotaxi = {'taxiid':service['taxi_id'] ,'cuantosServicios':1 , 'cuantasMillas': millas,'cuantoDinero':dinero,'puntos':0.0, 'viajes': lt.newList('SINGLE_LINKED', compareDates) }
-        infotaxi['puntos']=((infotaxi['cuantasMillas']/infotaxi['cuantoDinero'])*infotaxi['cuantosServicios'])
+        if infotaxi['cuantoDinero']!=0:
+            infotaxi['puntos']=((infotaxi['cuantasMillas']/infotaxi['cuantoDinero'])*infotaxi['cuantosServicios'])
         lt.addLast(infotaxi['viajes'], service)
-        m.put(date_entry['taxis'], service['taxi_id'], infotaxi)
+        m.put(date_entry['taxi'], service['taxi_id'], infotaxi)
     else :
         infotaxi = taxi['value']
         infotaxi['cuantosServicios']+=1
         infotaxi['cuantasMillas']+= millas
         infotaxi['cuantoDinero']+= dinero
-        infotaxi['puntos']=((infotaxi['cuantasMillas']/infotaxi['cuantoDinero'])*infotaxi['cuantosServicios'])
+        if infotaxi['cuantoDinero']!=0:
+            infotaxi['puntos']=((infotaxi['cuantasMillas']/infotaxi['cuantoDinero'])*infotaxi['cuantosServicios'])
         lt.addLast(infotaxi['viajes'], service)
 
     return analyzer
@@ -319,7 +329,7 @@ def converirLista(map):
     ite = it.newIterator(llaves)
     while(it.hasNext(ite)):
         info=it.next(ite)
-        actual = m.get(analyzer['stationsStart'],info)['value']
+        actual = m.get(map,info)['value']
         lt.addLast(lista, actual)
     return lista
 
@@ -328,7 +338,7 @@ def converirListas(map, lista):
     ite = it.newIterator(llaves)
     while(it.hasNext(ite)):
         info=it.next(ite)
-        actual = m.get(analyzer['stationsStart'],info)['value']
+        actual = m.get(map,info)['value']
         lt.addLast(lista, actual)
     return lista
 
@@ -363,7 +373,7 @@ def compareTrips(trip1, trip2):
 def compareTaxis(trip1, trip2):
     if (trip1 == trip2['key']):
         return 0
-    elif (trip1 > trip2):
+    elif (trip1 > trip2['key']):
         return 1
     else:
         return -1
@@ -371,7 +381,7 @@ def compareTaxis(trip1, trip2):
 def compareCompany(trip1, trip2):
     if (trip1 == trip2['key']):
         return 0
-    elif (trip1 > trip2):
+    elif (trip1 > trip2['key']):
         return 1
     else:
         return -1
