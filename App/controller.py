@@ -26,6 +26,7 @@
 
 import config as cf
 from App import model
+from DISClib.ADT import map as m
 import csv
 
 """
@@ -45,6 +46,28 @@ recae sobre el controlador.
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
+def totalComp(analyzer):
+    print(str(model.numTotalComp(analyzer)))
+
+def totalTaxis(analyzer):
+    print(str(model.numTotalTaxis(analyzer)))
+
+def topCompTaxis(analyzer, cuantos):
+    lista = model.topCompTaxis(analyzer)
+     i=0
+    while i<cuantos:
+        elemento = lt.getElement(lista, i)
+        i+=1
+        print(str(i) + ". " + str(elemento['name']) + " con " + str(m.size(elemento['taxis'])) + " puntos")
+
+def topServComp(analyzer, cuantos):
+    lista = model.topServComp(analyzer)
+     i=0
+    while i<cuantos:
+        elemento = lt.getElement(lista, i)
+        i+=1
+        print(str(i) + ". " + str(elemento['name']) + " con " + str(elemento['cuantosviajes']) + " puntos")
+
 def obtenerDia(analyzer, dia, cuantos):
     din = datetime.datetime.strptime(dia, '%Y-%m-%d')
     lista = model.obtenerDia(analyzer, din )
