@@ -222,12 +222,6 @@ def topServComp(analyzer):
     lista = converirLista(analyzer['empresas'])
     ist.insertionSort(lista, comparaServicios)
     return lista
-<<<<<<< HEAD
-
-def topServComp(analyzer, cuantos):
-    pass
-=======
->>>>>>> a9c559abd84e5166753bfb57e9b20e7f326bc7dd
 def obtenerDia(analyzer, dia):
     diain = om.get(analyzer['fechas'], dia)['value']['taxi']
     lista = converirLista(diain)
@@ -264,6 +258,7 @@ def communityArea(analyzer, origen, destino, timein, timefin):
             edge = gr.getEdge(graph, stopin, stopfin)
             if edge is None:
                 gr.addEdge(graph, stopfin, stopfin, duracion)
+    
 
 
 
