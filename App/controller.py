@@ -45,6 +45,24 @@ recae sobre el controlador.
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
+def obtenerDia(analyzer, dia, cuantos):
+    din = datetime.datetime.strptime(dia, '%Y-%m-%d')
+    lista = model.obtenerDia(analyzer, din )
+    i=0
+    while i<cuantos:
+        elemento = lt.getElement(lista, i)
+        i+=1
+        print(str(i) + ". " + str(elemento['taxiid']) + " con " + str(elemento['puntos']) + " puntos")
+
+def obtenerDias(analyzer, diain, diaul, cuantos):
+    din = datetime.datetime.strptime(diain, '%Y-%m-%d')
+    dend = datetime.datetime.strptime(diaul, '%Y-%m-%d')
+    lista = model.obtenerDias(analyzer, din, dend )
+    i=0
+    while i<cuantos:
+        elemento = lt.getElement(lista, i)
+        i+=1
+        print(str(i) + ". " + str(elemento['taxiid']) + " con " + str(elemento['puntos']) + " puntos")
 
 # ___________________________________________________
 #  Funciones para consultas

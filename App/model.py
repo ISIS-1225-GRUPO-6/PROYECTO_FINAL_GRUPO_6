@@ -26,7 +26,9 @@
 import config
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
+from DISClib.ADT import orderedmap as om
 from DISClib.ADT import list as lt
+from DISClib.Algorithms.Sorting import insertionsort as ist
 from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
@@ -172,8 +174,8 @@ def uptadeHour(analyzer,service):
     return analyzer
 
 def uptadeDate(analyzer,service):
-    date = service['Start_Time']
-    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+    date = service['trip_start_timestamp']
+    serviceDate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
     entry = om.get(analyzer['fechas'], serviceDate.date())
 
     if entry is None:
@@ -187,7 +189,8 @@ def uptadeDate(analyzer,service):
     millas = float(service['trip_miles'])
     dinero = float(service['trip_total'])
     if taxi is None:
-        infotaxi = {'taxi_id':service['taxi_id'] ,'cuantosServicios':1 , 'cuantasMillas': millas,'cuantoDinero':dinero, 'viajes': lt.newList('SINGLE_LINKED', compareDates) }
+        infotaxi = {'taxiid':service['taxi_id'] ,'cuantosServicios':1 , 'cuantasMillas': millas,'cuantoDinero':dinero,'puntos':0.0, 'viajes': lt.newList('SINGLE_LINKED', compareDates) }
+        infotaxi['puntos']=((infotaxi['cuantasMillas']/infotaxi['cuantoDinero'])*infotaxi['cuantosServicios'])
         lt.addLast(infotaxi['viajes'], service)
         m.put(date_entry['taxis'], service['taxi_id'], infotaxi)
     else :
@@ -195,6 +198,7 @@ def uptadeDate(analyzer,service):
         infotaxi['cuantosServicios']+=1
         infotaxi['cuantasMillas']+= millas
         infotaxi['cuantoDinero']+= dinero
+        infotaxi['puntos']=((infotaxi['cuantasMillas']/infotaxi['cuantoDinero'])*infotaxi['cuantosServicios'])
         lt.addLast(infotaxi['viajes'], service)
 
     return analyzer
@@ -207,6 +211,29 @@ def numTotalTaxis(analyzer):
 def numTotalComp(analyzer):
     return m.size(analyzer['empresas'])
 def topCompTaxis(analyzer, cuantos):
+    lista = converirLista(analyzer['empresas'])
+    ist.insertionSort(lista, comparaPuntos)
+    return lista
+
+def topServComp(analyzer, cuantos):
+
+def obtenerDia(analyzer, dia):
+
+    diain = om.get(analyzer['fechas'], dia)['value']['taxi']
+    lista = converirLista(diain)
+    ist.insertionSort(lista, comparaPuntos)
+    return lista
+
+def obtenerDias(analyzer, diain, diaul):
+    lista = lt.newList("ARRAY_LIST", cmpfunction=compareTaxis)
+    llaves = om.keys(analyzer['fechas'], diain,diaul)
+    iterator= it.newIterator(llaves)
+    while (it.hasNext(iterator)):
+        info= it.next(iterator)
+        valor = om.get(analyzer['fechas'],info)['value']['taxi']
+        converirListas(valor, lista)
+    ist.insertionSort(lista, comparaPuntos)
+    return lista
     
 
 
@@ -214,9 +241,33 @@ def topCompTaxis(analyzer, cuantos):
 # Funciones Helper
 # ==============================
 
+def converirLista(map):
+    lista = lt.newList("ARRAY_LIST", cmpfunction=compareTaxis)
+    llaves = m.keySet(map)
+    ite = it.newIterator(llaves)
+    while(it.hasNext(ite)):
+        info=it.next(ite)
+        actual = m.get(analyzer['stationsStart'],info)['value']
+        lt.addLast(lista, actual)
+    return lista
+
+def converirListas(map, lista):
+    llaves = m.keySet(map)
+    ite = it.newIterator(llaves)
+    while(it.hasNext(ite)):
+        info=it.next(ite)
+        actual = m.get(analyzer['stationsStart'],info)['value']
+        lt.addLast(lista, actual)
+    return lista
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
+def comparaPuntos(element1, element2):
+    if float(element1['puntos']) > float(element2['puntos']):
+        return True
+    return False
+
 def compareTrips(trip1, trip2):
     if (trip1 == trip2):
         return 0
