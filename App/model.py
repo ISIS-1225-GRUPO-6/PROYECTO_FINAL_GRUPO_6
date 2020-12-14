@@ -222,6 +222,7 @@ def numTotalComp(analyzer):
     return m.size(analyzer['empresas'])
 def topCompTaxis(analyzer):
     lista = converirLista(analyzer['empresas'])
+    print()
     ist.insertionSort(lista, comparaTaxiRank)
     return lista
 def topServComp(analyzer):
@@ -353,7 +354,6 @@ def comparaServicios(element1, element2):
 def comparaTaxiRank(element1 , element2):
     taxis1 = m.size(element1['taxis'])
     taxis2 = m.size(element2['taxis'])
-    print(str(taxis2)+str(taxis1))
     if int(taxis1) > int(taxis2):
         return True
     return False
