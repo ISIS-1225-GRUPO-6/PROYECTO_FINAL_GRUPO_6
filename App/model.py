@@ -102,7 +102,7 @@ def addGraph(analyzer, stopin, stopfin, duracion):
             gr.insertVertex(analyzer['viajes'], stopfin)
 
         edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
-        if edge is None or edge > duracion:
+        if edge is None:
             gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
 
         return analyzer
@@ -235,13 +235,26 @@ def obtenerDias(analyzer, diain, diaul):
     return lista
     
 def communityArea(analyzer, origen, destino, timein, timefin):
-
+    graph = gr.newGraph(datastructure='ADJ_LIST', directed=True, size=10000, comparefunction=compareTrips)
     llaves = om.keys(analyzer['hora'],timein, timefin)
     iterator= it.newIterator(llaves)
     while (it.hasNext(iterator)):
         info= it.next(iterator)
         valor = om.get(analyzer['hora'],info)['value']['service']
-        
+        ite = it.newIterator(valor)
+        while (it.hasNext(ite)):
+            inf= it.next(ite)
+            inicio= inf['pickup_community_area']
+            final= inf['dropoff_community_area']
+            duracion = inf['trip_seconds']
+             if not gr.containsVertex(graph, stopin):
+            gr.insertVertex(graph, stopin)
+            if not gr.containsVertex(graph, stopfin):
+                gr.insertVertex(graph, stopfin)
+            edge = gr.getEdge(graph, stopin, stopfin)
+            if edge is None:
+                gr.addEdge(graph, stopfin, stopfin, duracion)
+
 
 
 
