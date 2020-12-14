@@ -47,7 +47,70 @@ operación seleccionada.
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
+def printMenu():
+    print("\n")
+    print("*******************************************")
+    print("Bienvenido")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información de servicios de taxis")
+    print("3- Requerimiento 1 (Reporte de Información Compañías y Taxis)")
+    print("4- Requerimiento 2 (Sistema de Puntos y Premios a Taxis)")
+    print("5- Requerimiento 3 (Consulta del Mejor Horario en Taxi entre 2 “community areas”)")
+    print("0- Salir")
+    print("*******************************************")
 
+def optionTwo():
+    print("\nCargando información de los servicios de taxis ....")
+    controller.loadTrips(cont)
+    #numedges = controller.totalConnections(cont)
+    #numvertex = controller.totalStops(cont)
+   
+def optionThree():
+    comp_por_taxis  = int(input("Digite el número para el top de compañías ordenada por la cantidad de taxis afiliados\n"))
+    comp_por_servicios = int(input("Digite el número para el top de compañías que más servicios prestaron\n"))
+    #controller.
+
+def optionFour():
+    ene=int(input("Digite la cantidad de taxis con más puntos en una fecha que desea conocer.\n"))
+    eme=int(input("Digite la cantidad de taxis con más puntos en un rango de fechas que desea conocer.\n"))
+    #controller.
+
+def optionFive():
+    print("Digite el rango horario para desplazarse en el menor tiempo entre dos Community Area (HH:MM)")
+    hora_inicial=input("Hora inicial:\n")
+    hora_final=input("Hora final:\n")
+    print("Ingrese el nombre de dos Community Areas")
+    com1=str(input("Primer Community Area:\n"))
+    com2=str(input("Segunda Community Area:\n"))
+    #controller.
+    
 """
 Menu principal
 """
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n>')
+
+    if int(inputs) == 1:
+        print("\nInicializando....")
+        cont = controller.init()
+
+    elif int(inputs[0]) == 2:
+        executiontime = timeit.timeit(optionTwo, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 3:
+        executiontime = timeit.timeit(optionThree, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 4:
+        executiontime = timeit.timeit(optionFour, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 5:
+        executiontime = timeit.timeit(optionFive, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    else:
+        sys.exit(0)
+sys.exit(0)

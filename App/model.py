@@ -94,23 +94,21 @@ def addGraph(analyzer, stopin, stopfin, duracion):
     """
     Adiciona una estación como un vertice del grafo
     """
-    try:
-        if not gr.containsVertex(analyzer['viajes'], stopin):
-            gr.insertVertex(analyzer['viajes'], stopin)
+    
+    if not gr.containsVertex(analyzer['viajes'], stopin):
+        gr.insertVertex(analyzer['viajes'], stopin)
+    if not gr.containsVertex(analyzer['viajes'], stopfin):
+        gr.insertVertex(analyzer['viajes'], stopfin)
 
-        if not gr.containsVertex(analyzer['viajes'], stopfin):
-            gr.insertVertex(analyzer['viajes'], stopfin)
+    edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
+    if edge is None or edge > duracion:
+        gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
 
-        edge = gr.getEdge(analyzer["graph"], stopin, stopfin)
-        if edge is None or edge > duracion:
-            gr.addEdge(analyzer["graph"], stopfin, stopfin, duracion)
-
-        return analyzer
+    return analyzer
 
 def taxi(analyzer, service):
     entry = m.get(analyzer['taxis'], service["taxi_id"])
     if entry is None:
-
         infoService ={"cuantosViajes":1 ,"id" : service["taxi_id"], "tiempoUso": int(service["trip_seconds"]) , 'distancia':float(service['tripmiles']),"viajes": lt.newList("ARRAY_LIST", cmpfunction=compareTrips)}
         lt.addLast(infoService["viajes"], service)
         m.put(analyzer['taxis'], service["taxi_id"], infoService)
@@ -123,7 +121,7 @@ def taxi(analyzer, service):
 
 def addcompañia(analyzer, compañia, service):
     entry = m.get(analyzer['empresas'], compañia)
-    if entry in None:
+    if entry is None:
         infoCompany = {'name': compañia, 'cuantosviajes':1, 'taxis' : m.newMap(numelements=2000, maptype='PROBING', comparefunction=compareTaxis) }
         m.put(analyzer['empresas'], compañia, infoCompany)    
     else:
@@ -216,7 +214,7 @@ def topCompTaxis(analyzer, cuantos):
     return lista
 
 def topServComp(analyzer, cuantos):
-
+    pass
 def obtenerDia(analyzer, dia):
 
     diain = om.get(analyzer['fechas'], dia)['value']['taxi']
