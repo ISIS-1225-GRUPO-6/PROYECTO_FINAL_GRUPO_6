@@ -141,8 +141,8 @@ def addcompañia(analyzer, compañia, service):
     
 def newHourEntry():
  
-    entry = {'idtaxi': None, 'service': None}
-    entry['service'] = lt.newList('SINGLE_LINKED', compareDates)
+    entry = {'hour': None, 'service': None}
+    entry['service'] = lt.newList('SINGLE_LINKED', compareHours)
     return entry
 
 def newDateEntry():
@@ -170,7 +170,7 @@ def uptadeHour(analyzer,service):
         hour_entry = me.getValue(entry)
     
     lt.addLast(hour_entry['service'], service)
-    hour_entry['idtaxi']= service['taxi_id']
+    hour_entry['hour']= format
     return analyzer
 
 def uptadeDate(analyzer,service):
@@ -219,7 +219,6 @@ def topServComp(analyzer):
     ist.insertionSort(lista, comparaServicios)
     return lista
 def obtenerDia(analyzer, dia):
-
     diain = om.get(analyzer['fechas'], dia)['value']['taxi']
     lista = converirLista(diain)
     ist.insertionSort(lista, comparaPuntos)
@@ -235,6 +234,16 @@ def obtenerDias(analyzer, diain, diaul):
     ist.insertionSort(lista, comparaPuntos)
     return lista
     
+def communityArea(analyzer, origen, destino, timein, timefin):
+
+    llaves = om.keys(analyzer['hora'],timein, timefin)
+    iterator= it.newIterator(llaves)
+    while (it.hasNext(iterator)):
+        info= it.next(iterator)
+        valor = om.get(analyzer['hora'],info)['value']['service']
+        
+
+
 
 # ==============================
 # Funciones Helper
