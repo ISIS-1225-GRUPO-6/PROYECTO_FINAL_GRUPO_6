@@ -128,7 +128,7 @@ def taxi(analyzer, service):
 def addcompañia(analyzer, compañia, service):
     entry = m.get(analyzer['empresas'], compañia)
     if entry is None:
-        infoCompany = {'name': compañia, 'cuantosviajes':1, 'taxis' : m.newMap(numelements=2000, maptype='PROBING', comparefunction=compareTaxis) }
+        infoCompany = {'name': compañia, 'cuantosviajes':1, 'cuantosTaxis': 0, 'taxis' : m.newMap(numelements=2000, maptype='PROBING', comparefunction=compareTaxis) }
         m.put(analyzer['empresas'], compañia, infoCompany)    
     else:
         infoCompany = entry['value']
@@ -136,6 +136,7 @@ def addcompañia(analyzer, compañia, service):
     taxi = m.get(infoCompany['taxis'], service['taxi_id'])
     if taxi is None:
         infotaxi = {'taxi_id':service['taxi_id'] ,'cuantosServicios':1, 'viajes': lt.newList('SINGLE_LINKED', compareTaxis) }
+        infoCompany['cuantosTaxis']+=1
         lt.addLast(infotaxi['viajes'], service)
         m.put(infoCompany['taxis'], service['taxi_id'], infotaxi)
     else :
@@ -311,7 +312,7 @@ def sameCC(analyzer, station1, station2):
 # ==============================
 
 def converirLista(map):
-    lista = lt.newList("ARRAY_LIST", cmpfunction=compareTaxis)
+    lista = lt.newList("ARRAY_LIST")
     llaves = m.keySet(map)
     ite = it.newIterator(llaves)
     while(it.hasNext(ite)):
@@ -339,9 +340,7 @@ def comparaServicios(element1, element2):
 
 def comparaTaxiRank(element1, element2):
     if element2 is not None:
-        taxis1 = m.size(element1['taxis'])
-        taxis2 = m.size(element2['taxis'])
-        if int(taxis1) > int(taxis2)  :
+        if float(element1['cuantosTaxis']) > float(element2['cuantosTaxis']) :
             return True
     return False
 
