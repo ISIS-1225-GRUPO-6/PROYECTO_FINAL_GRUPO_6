@@ -29,6 +29,7 @@ from DISClib.ADT import map as m
 from DISClib.ADT import orderedmap as om
 from DISClib.ADT import list as lt
 from DISClib.Algorithms.Sorting import insertionsort as ist
+from DISClib.Algorithms.Sorting import mergesort as ms
 from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
@@ -135,14 +136,13 @@ def addcompañia(analyzer, compañia, service):
 
     taxi = m.get(infoCompany['taxis'], service['taxi_id'])
     if taxi is None:
-        infotaxi = {'taxi_id':service['taxi_id'] ,'cuantosServicios':1, 'viajes': lt.newList('SINGLE_LINKED', compareTaxis) }
+        infotaxi = {'taxi_id':service['taxi_id'] ,'cuantosServicios':1 }
         infoCompany['cuantosTaxis']+=1
-        lt.addLast(infotaxi['viajes'], service)
         m.put(infoCompany['taxis'], service['taxi_id'], infotaxi)
     else :
         infotaxi = taxi['value']
         infotaxi['cuantosServicios']+=1
-        lt.addLast(infotaxi['viajes'], service)
+        
 
 def uptadeHour(analyzer,service):
     date = service['trip_start_timestamp']
@@ -210,16 +210,18 @@ def numTotalComp(analyzer):
     return m.size(analyzer['empresas'])
 def topCompTaxis(analyzer):
     lista = converirLista(analyzer['empresas'])
-    ist.insertionSort(lista, comparaTaxiRank)
+    ms.mergesort(lista, comparaTaxiRank)
+    #ist.insertionSort(lista, comparaTaxiRank)
     return lista
 def topServComp(analyzer):
     lista = converirLista(analyzer['empresas'])
-    ist.insertionSort(lista, comparaServicios)
+    ms.mergesort(lista, comparaServicios)
+    #ist.insertionSort(lista, comparaServicios)
     return lista
 def obtenerDia(analyzer, dia):
     diain = om.get(analyzer['fechas'], dia)['value']['taxi']
     lista = converirLista(diain)
-    ist.insertionSort(lista, comparaPuntos)
+    ms.mergesort(lista, comparaPuntos)
     return lista
 def obtenerDias(analyzer, diain, diaul):
     lista = lt.newList("ARRAY_LIST", cmpfunction=compareTaxis)
@@ -229,7 +231,7 @@ def obtenerDias(analyzer, diain, diaul):
         info= it.next(iterator)
         valor = om.get(analyzer['fechas'],info)['value']['taxi']
         converirListas(valor, lista)
-    ist.insertionSort(lista, comparaPuntos)
+    ms.mergesort(lista, comparaPuntos)
     return lista
     
 def communityArea(analyzer, origen, destino, timein, timefin):
@@ -339,7 +341,7 @@ def comparaServicios(element1, element2):
     return False
 
 def comparaTaxiRank(element1, element2):
-    if element2 is not None:
+    if element1 is not None and element2 is not None:
         if float(element1['cuantosTaxis']) > float(element2['cuantosTaxis']) :
             return True
     return False

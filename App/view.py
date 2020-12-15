@@ -88,7 +88,7 @@ def optionFive():
     print("Ingrese el nombre de dos Community Areas\n")
     com1=str(input("Primer Community Area:\n"))
     com2=str(input("Segunda Community Area:\n"))
-    
+    controller.communityArea(cont, com1,com2, hora_inicial,hora_final)
     
 """
 Menu principal

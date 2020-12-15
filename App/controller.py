@@ -27,6 +27,7 @@
 import config as cf
 from App import model
 from DISClib.ADT import map as m
+from DISClib.ADT import list as lt
 import datetime
 import csv
 import os
@@ -77,45 +78,57 @@ def loadServices(analyzer, servicesfile):
         
     return analyzer
 def totalComp(analyzer):
-    print(str(model.numTotalComp(analyzer)))
+    print("existen : "+str(model.numTotalComp(analyzer))+" compañias")
 
 def totalTaxis(analyzer):
-    print(str(model.numTotalTaxis(analyzer)))
+    print("existen : "+str(model.numTotalTaxis(analyzer))+" taxis")
 
 def topCompTaxis(analyzer, cuantos):
     lista = model.topCompTaxis(analyzer)
-    i=0
-    while i<cuantos:
+    i=1
+    while i<=cuantos:
         elemento = lt.getElement(lista, i)
+        print(str(i) + ". " + str(elemento['name']) + " con " + str(m.size(elemento['taxis'])) + " taxis")
         i+=1
-        print(str(i) + ". " + str(elemento['name']) + " con " + str(m.size(elemento['taxis'])) + " puntos")
+
 
 def topServComp(analyzer, cuantos):
     lista = model.topServComp(analyzer)
-    i=0
-    while i<cuantos:
+    i=1
+    while i<=cuantos:
         elemento = lt.getElement(lista, i)
+        print(str(i) + ". " + str(elemento['name']) + " con " + str(elemento['cuantosviajes']) + " viajes")
         i+=1
-        print(str(i) + ". " + str(elemento['name']) + " con " + str(elemento['cuantosviajes']) + " puntos")
+
 
 def obtenerDia(analyzer, dia, cuantos):
     din = datetime.datetime.strptime(dia, '%Y-%m-%d')
     lista = model.obtenerDia(analyzer, din.date() )
-    i=0
-    while i<cuantos:
+    i=1
+    while i<=cuantos:
         elemento = lt.getElement(lista, i)
-        i+=1
         print(str(i) + ". " + str(elemento['taxiid']) + " con " + str(elemento['puntos']) + " puntos")
+        i+=1
 
 def obtenerDias(analyzer, diain, diaul, cuantos):
     din = datetime.datetime.strptime(diain, '%Y-%m-%d')
     dend = datetime.datetime.strptime(diaul, '%Y-%m-%d')
     lista = model.obtenerDias(analyzer, din.date(), dend.date() )
-    i=0
-    while i<cuantos:
+    i=1
+    while i<=cuantos:
         elemento = lt.getElement(lista, i)
-        i+=1
         print(str(i) + ". " + str(elemento['taxiid']) + " con " + str(elemento['puntos']) + " puntos")
+        i+=1
+
+def communityArea(analyzer, origen, destino, timein, timefin):
+    lista= model.communityArea(analyzer,origen,destino,timein,timefin)
+    cuantos = lt.size(lista)-1
+    i=1
+    print("la ruta tiene "+str(cuantos)+" estaciones, y un tiempo aproximado de: "+str(int(lista['last']['info'])/60)+ "minutos")
+    while i<=cuantos:
+        element = lt.getElement(lista, i)
+        print(str(i)+". "+ element)
+        i+=1
 
 # ___________________________________________________
 #  Funciones para consultas
