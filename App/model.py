@@ -142,19 +142,6 @@ def addcompañia(analyzer, compañia, service):
         infotaxi = taxi['value']
         infotaxi['cuantosServicios']+=1
         lt.addLast(infotaxi['viajes'], service)
-    
-def newHourEntry():
- 
-    entry = {'hour': None, 'service': None}
-    entry['service'] = lt.newList('SINGLE_LINKED', compareHours)
-    return entry
-
-def newDateEntry():
- 
-    entry = {'service': None, 'taxi': None }
-    entry['service'] = lt.newList('SINGLE_LINKED', compareDates)
-    entry['taxi']= m.newMap(numelements=2000,maptype='PROBING',comparefunction=compareTaxis)
-    return entry
 
 def uptadeHour(analyzer,service):
     date = service['trip_start_timestamp']
@@ -168,7 +155,7 @@ def uptadeHour(analyzer,service):
     entry = om.get(analyzer['hora'], formato)
 
     if entry is None:
-        hour_entry = newHourEntry()
+        hour_entry = {'hour': formato, 'service': lt.newList('SINGLE_LINKED', compareHours)}
         om.put(analyzer['hora'] ,formato, hour_entry)  
     else:
         hour_entry = me.getValue(entry)
@@ -183,12 +170,12 @@ def uptadeDate(analyzer,service):
     entry = om.get(analyzer['fechas'], serviceDate.date())
 
     if entry is None:
-        date_entry = newDateEntry()
+        date_entry ={'service': lt.newList('SINGLE_LINKED', compareDates) , 'taxi': m.newMap(numelements=2000,maptype='PROBING',comparefunction=compareTaxis)}
         om.put(analyzer['fechas'] ,serviceDate.date(), date_entry)  
     else:
         date_entry = me.getValue(entry)
-    
     lt.addLast(date_entry['service'], service)
+
     taxi = m.get(date_entry['taxi'], service['taxi_id'])
     dinero=0.0
     millas=0.0
@@ -222,7 +209,6 @@ def numTotalComp(analyzer):
     return m.size(analyzer['empresas'])
 def topCompTaxis(analyzer):
     lista = converirLista(analyzer['empresas'])
-    print()
     ist.insertionSort(lista, comparaTaxiRank)
     return lista
 def topServComp(analyzer):
@@ -347,19 +333,20 @@ def converirListas(map, lista):
 # Funciones de Comparacion
 # ==============================
 def comparaServicios(element1, element2):
-    if float(element1['cuantosviajes']) > float(element2['cuantosviajes']):
+    if float(element1['cuantosviajes']) > float(element2['cuantosviajes']) and element2 is not None:
         return True
     return False
 
-def comparaTaxiRank(element1 , element2):
-    taxis1 = m.size(element1['taxis'])
-    taxis2 = m.size(element2['taxis'])
-    if int(taxis1) > int(taxis2):
-        return True
+def comparaTaxiRank(element1, element2):
+    if element2 is not None:
+        taxis1 = m.size(element1['taxis'])
+        taxis2 = m.size(element2['taxis'])
+        if int(taxis1) > int(taxis2)  :
+            return True
     return False
 
 def comparaPuntos(element1, element2):
-    if float(element1['puntos']) > float(element2['puntos']):
+    if float(element1['puntos']) > float(element2['puntos']) and element2 is not None:
         return True
     return False
 

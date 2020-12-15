@@ -27,6 +27,7 @@
 import config as cf
 from App import model
 from DISClib.ADT import map as m
+import datetime
 import csv
 import os
 
@@ -99,7 +100,7 @@ def topServComp(analyzer, cuantos):
 
 def obtenerDia(analyzer, dia, cuantos):
     din = datetime.datetime.strptime(dia, '%Y-%m-%d')
-    lista = model.obtenerDia(analyzer, din )
+    lista = model.obtenerDia(analyzer, din.date() )
     i=0
     while i<cuantos:
         elemento = lt.getElement(lista, i)
@@ -109,7 +110,7 @@ def obtenerDia(analyzer, dia, cuantos):
 def obtenerDias(analyzer, diain, diaul, cuantos):
     din = datetime.datetime.strptime(diain, '%Y-%m-%d')
     dend = datetime.datetime.strptime(diaul, '%Y-%m-%d')
-    lista = model.obtenerDias(analyzer, din, dend )
+    lista = model.obtenerDias(analyzer, din.date(), dend.date() )
     i=0
     while i<cuantos:
         elemento = lt.getElement(lista, i)
